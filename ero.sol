@@ -6,7 +6,7 @@
 
 pragma solidity ^0.7.6;
 
-interface IBEP20 {
+interface IERC20 {
     function totalSupply() external view returns (uint256);
     function decimals() external view returns (uint8);
     function symbol() external view returns (string memory);
@@ -92,8 +92,8 @@ contract DividendDistributor is IDividendDistributor {
     }
 
     IDEXRouter router;
-    address routerAddress = 0x10ED43C718714eb63d5aA57B78B54704E256024E;
-    IBEP20 RewardToken = IBEP20(0x55d398326f99059fF775485246999027B3197955); //Tether
+    address routerAddress = 0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff;
+    IERC20 RewardToken = IERC20(0x2791bca1f2de4661ed88a30c99a7a9449aa84174); //USDC
 
     address[] shareholders;
     mapping (address => uint256) shareholderIndexes;
@@ -221,7 +221,7 @@ contract DividendDistributor is IDividendDistributor {
     }
     
     function setRewardToken(address _rewardToken) external onlyToken{
-        RewardToken = IBEP20(_rewardToken);
+        RewardToken = IERC20(_rewardToken);
     }
 
     function getUnpaidEarnings(address shareholder) public view returns (uint256) {
@@ -315,7 +315,7 @@ abstract contract Auth {
     event OwnershipTransferred(address owner);
 }
 
-contract ERO is IBEP20, Auth {
+contract ERO is IERC20, Auth {
     
     using SafeMath for uint256;
 
@@ -396,7 +396,7 @@ contract ERO is IBEP20, Auth {
 
         // Marketing and LP receiver wallets settings
         autoLiquidityReceiver = address(ZERO);
-        marketingWallet = 0x1c34b51904968253624A078F044ddB01f02C0D5F;  // marketingwallet
+        marketingWallet = 0xe5732e0232e372C3cd36AB5DAd877F89831458Ca;  // marketingwallet
         
         totalFee = liquidityFee.add(marketingFee).add(rewardsFee);
         totalFeeIfSelling = totalFee;
