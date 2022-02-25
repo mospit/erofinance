@@ -323,8 +323,8 @@ contract ERO is IERC20, Auth {
 
     address DEAD = 0x000000000000000000000000000000000000dEaD;
     address ZERO = 0x0000000000000000000000000000000000000000;
-    address routerAddress = 0x10ED43C718714eb63d5aA57B78B54704E256024E;
-    address RewardToken = 0x55d398326f99059fF775485246999027B3197955;
+    address routerAddress = 0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff;
+    address RewardToken = 0x2791bca1f2de4661ed88a30c99a7a9449aa84174;
 
     uint256 _totalSupply = 1000000000 * (10 ** _decimals);
     uint256 public _maxTxAmount = _totalSupply;
