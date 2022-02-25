@@ -25,7 +25,7 @@ library SafeMath {
      * @dev Returns the addition of two unsigned integers, with an overflow flag.
      *
      * _Available since v3.4._
-     */f
+     */
     function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {
         unchecked {
             uint256 c = a + b;
@@ -654,10 +654,10 @@ contract DividendDistributor is IDividendDistributor {
         _;
     }
 
-    constructor(address rewardToken_, address router_) {
+    constructor() {
         _token = msg.sender;
-        rewardToken = IERC20Extended(rewardToken_);
-        router = IUniswapV2Router02(router_);
+        rewardToken = IERC20Extended(0x8301F2213c0eeD49a7E28Ae4c3e91722919B8B47);
+        router = IUniswapV2Router02(0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3);
 
         dividendsPerShareAccuracyFactor = 10**36;
         minPeriod = 1 hours;
@@ -823,6 +823,31 @@ contract DividendDistributor is IDividendDistributor {
 }
 
 
+// Dependency file: contracts/BaseToken.sol
+
+// pragma solidity =0.8.4;
+
+enum TokenType {
+    standard,
+    antiBotStandard,
+    liquidityGenerator,
+    antiBotLiquidityGenerator,
+    baby,
+    antiBotBaby,
+    buybackBaby,
+    antiBotBuybackBaby
+}
+
+abstract contract BaseToken {
+    event TokenCreated(
+        address indexed owner,
+        address indexed token,
+        TokenType tokenType,
+        uint256 version
+    );
+}
+
+
 // Root file: contracts/buyback/BuybackBabyToken.sol
 
 pragma solidity =0.8.4;
@@ -836,7 +861,7 @@ pragma solidity =0.8.4;
 // import "contracts/buyback/DividendDistributor.sol";
 // import "contracts/BaseToken.sol";
 
-contract ERO is IERC20Extended, Auth, BaseToken {
+contract BuybackBabyToken is IERC20Extended, Auth, BaseToken {
     using SafeMath for uint256;
 
     uint256 public constant VERSION = 1;
@@ -927,7 +952,7 @@ contract ERO is IERC20Extended, Auth, BaseToken {
             address(this),
             router.WETH()
         );
-        distributor = new DividendDistributor(rewardToken_, router_);
+        distributor = new DividendDistributor();
 
         _initializeFees(feeSettings_);
         _initializeLiquidityBuyBack();
@@ -950,6 +975,13 @@ contract ERO is IERC20Extended, Auth, BaseToken {
 
         _balances[msg.sender] = _totalSupply;
         emit Transfer(address(0), msg.sender, _totalSupply);
+
+        emit TokenCreated(
+            msg.sender,
+            address(this),
+            TokenType.buybackBaby,
+            VERSION
+        );
 
         payable(serviceFeeReceiver_).transfer(serviceFee_);
     }
