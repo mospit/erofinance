@@ -25,7 +25,7 @@ library SafeMath {
      * @dev Returns the addition of two unsigned integers, with an overflow flag.
      *
      * _Available since v3.4._
-     */
+     */f
     function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {
         unchecked {
             uint256 c = a + b;
@@ -823,31 +823,6 @@ contract DividendDistributor is IDividendDistributor {
 }
 
 
-// Dependency file: contracts/BaseToken.sol
-
-// pragma solidity =0.8.4;
-
-enum TokenType {
-    standard,
-    antiBotStandard,
-    liquidityGenerator,
-    antiBotLiquidityGenerator,
-    baby,
-    antiBotBaby,
-    buybackBaby,
-    antiBotBuybackBaby
-}
-
-abstract contract BaseToken {
-    event TokenCreated(
-        address indexed owner,
-        address indexed token,
-        TokenType tokenType,
-        uint256 version
-    );
-}
-
-
 // Root file: contracts/buyback/BuybackBabyToken.sol
 
 pragma solidity =0.8.4;
@@ -861,7 +836,7 @@ pragma solidity =0.8.4;
 // import "contracts/buyback/DividendDistributor.sol";
 // import "contracts/BaseToken.sol";
 
-contract BuybackBabyToken is IERC20Extended, Auth, BaseToken {
+contract ERO is IERC20Extended, Auth, BaseToken {
     using SafeMath for uint256;
 
     uint256 public constant VERSION = 1;
@@ -975,13 +950,6 @@ contract BuybackBabyToken is IERC20Extended, Auth, BaseToken {
 
         _balances[msg.sender] = _totalSupply;
         emit Transfer(address(0), msg.sender, _totalSupply);
-
-        emit TokenCreated(
-            msg.sender,
-            address(this),
-            TokenType.buybackBaby,
-            VERSION
-        );
 
         payable(serviceFeeReceiver_).transfer(serviceFee_);
     }
