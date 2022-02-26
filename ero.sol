@@ -766,7 +766,7 @@ contract DividendPayingToken is ERC20, Ownable, DividendPayingTokenInterface, Di
   using SafeMathUint for uint256;
   using SafeMathInt for int256;
 
-  address public immutable USDT = address(0xdAC17F958D2ee523a2206206994597C13D831ec7); //USDT
+  address public immutable USDC = address(0x2791bca1f2de4661ed88a30c99a7a9449aa84174); //USDC
 
 
   // With `magnitude`, we can properly distribute dividends even if the amount of received ether is small.
@@ -797,7 +797,7 @@ contract DividendPayingToken is ERC20, Ownable, DividendPayingTokenInterface, Di
   }
 
 
-  function distributeUSDTDividends(uint256 amount) public onlyOwner{
+  function distributeUSDCDividends(uint256 amount) public onlyOwner{
     require(totalSupply() > 0);
 
     if (amount > 0) {
@@ -823,7 +823,7 @@ contract DividendPayingToken is ERC20, Ownable, DividendPayingTokenInterface, Di
     if (_withdrawableDividend > 0) {
       withdrawnDividends[user] = withdrawnDividends[user].add(_withdrawableDividend);
       emit DividendWithdrawn(user, _withdrawableDividend);
-      bool success = IERC20(USDT).transfer(user, _withdrawableDividend);
+      bool success = IERC20(USDC).transfer(user, _withdrawableDividend);
 
       if(!success) {
         withdrawnDividends[user] = withdrawnDividends[user].sub(_withdrawableDividend);
@@ -1190,7 +1190,7 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
 
 
 
-contract RisingSun is ERC20, Ownable {
+contract EroFinance is ERC20, Ownable {
     using SafeMath for uint256;
 
     IUniswapV2Router02 public uniswapV2Router;
@@ -1198,21 +1198,20 @@ contract RisingSun is ERC20, Ownable {
 
     bool private swapping;
 
-    RisingSunDividendTracker public dividendTracker;
+    EroFinanceDividendTracker public dividendTracker;
 
     address public deadWallet = 0x000000000000000000000000000000000000dEaD;
 
-    address public immutable USDT = address(0xdAC17F958D2ee523a2206206994597C13D831ec7); //USDT
+    address public immutable USDC = address(0x2791bca1f2de4661ed88a30c99a7a9449aa84174); //USDC
     
-    uint256 public swapTokensAtAmount = 10000000000000 *  10**9;
+    uint256 public swapTokensAtAmount = 1000 *  10**18;
     
     mapping(address => bool) public _isBlacklisted;
 
-    uint256 public USDTRewardsFee = 4;
     uint256 public liquidityFee = 3;
     uint256 public marketingFee = 3;
     uint256 public donationFee = 3;
-    uint256 public totalFees = USDTRewardsFee.add(liquidityFee).add(marketingFee).add(donationFee);
+    uint256 public totalFees = USDCRewardsFee.add(liquidityFee).add(marketingFee).add(donationFee);
 
     address public _marketingWalletAddress = 0xD20729C5a9b8AF765f3675C697E536Eef71A2789;
     address public _donationWallet = 0x5f7865E60D173f7618f41Ae0e6E36ba2D76f481a;
@@ -1267,9 +1266,9 @@ contract RisingSun is ERC20, Ownable {
         address[] path
     );
 
-    constructor() public ERC20("Rising Sun", "SUN") {
+    constructor() public ERC20("Ero Finance", "ERO") {
 
-    	dividendTracker = new RisingSunDividendTracker();
+    	dividendTracker = new EroFinanceDividendTracker();
 
 
     	IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D);
@@ -1299,7 +1298,7 @@ contract RisingSun is ERC20, Ownable {
             _mint is an internal function in ERC20.sol that is only called here,
             and CANNOT be called ever again
         */
-        _mint(owner(), 100000000000000000000 *  10**9);
+        _mint(owner(), 1000000000 *  10**18);
     }
 
     receive() external payable {
@@ -1307,11 +1306,11 @@ contract RisingSun is ERC20, Ownable {
   	}
 
     function updateDividendTracker(address newAddress) public onlyOwner {
-        require(newAddress != address(dividendTracker), "RisingSun: The dividend tracker already has that address");
+        require(newAddress != address(dividendTracker), "EroFinance: The dividend tracker already has that address");
 
-        RisingSunDividendTracker newDividendTracker = RisingSunDividendTracker(payable(newAddress));
+        EroFinanceDividendTracker newDividendTracker = EroFinanceDividendTracker(payable(newAddress));
 
-        require(newDividendTracker.owner() == address(this), "RisingSun: The new dividend tracker must be owned by the RisingSun token contract");
+        require(newDividendTracker.owner() == address(this), "EroFinance: The new dividend tracker must be owned by the EroFinance token contract");
 
         newDividendTracker.excludeFromDividends(address(newDividendTracker));
         newDividendTracker.excludeFromDividends(address(this));
@@ -1324,7 +1323,7 @@ contract RisingSun is ERC20, Ownable {
     }
 
     function updateUniswapV2Router(address newAddress) public onlyOwner {
-        require(newAddress != address(uniswapV2Router), "RisingSun: The router already has that address");
+        require(newAddress != address(uniswapV2Router), "EroFinance: The router already has that address");
         emit UpdateUniswapV2Router(newAddress, address(uniswapV2Router));
         uniswapV2Router = IUniswapV2Router02(newAddress);
         address _uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory())
@@ -1333,7 +1332,7 @@ contract RisingSun is ERC20, Ownable {
     }
 
     function excludeFromFees(address account, bool excluded) public onlyOwner {
-        require(_isExcludedFromFees[account] != excluded, "RisingSun: Account is already the value of 'excluded'");
+        require(_isExcludedFromFees[account] != excluded, "EroFinance: Account is already the value of 'excluded'");
         _isExcludedFromFees[account] = excluded;
 
         emit ExcludeFromFees(account, excluded);
@@ -1359,25 +1358,25 @@ contract RisingSun is ERC20, Ownable {
         _donationWallet = wallet;
     }
 
-    function setUSDTRewardsFee(uint256 value) external onlyOwner{
-        USDTRewardsFee = value;
-        totalFees = USDTRewardsFee.add(liquidityFee).add(marketingFee).add(donationFee);
+    function setUSDCRewardsFee(uint256 value) external onlyOwner{
+        USDCRewardsFee = value;
+        totalFees = USDCRewardsFee.add(liquidityFee).add(marketingFee).add(donationFee);
     }
 
     function setLiquiditFee(uint256 value) external onlyOwner{
         liquidityFee = value;
-        totalFees = USDTRewardsFee.add(liquidityFee).add(marketingFee).add(donationFee);
+        totalFees = USDCRewardsFee.add(liquidityFee).add(marketingFee).add(donationFee);
     }
 
     function setMarketingFee(uint256 _marketingFee) external onlyOwner{
         marketingFee = _marketingFee;
-        totalFees = USDTRewardsFee.add(liquidityFee).add(marketingFee).add(donationFee);
+        totalFees = USDCRewardsFee.add(liquidityFee).add(marketingFee).add(donationFee);
 
     }
     
     function setdonationFee(uint256 _donationFee) external onlyOwner{
         donationFee = _donationFee;
-        totalFees = USDTRewardsFee.add(liquidityFee).add(marketingFee).add(donationFee);
+        totalFees = USDCRewardsFee.add(liquidityFee).add(marketingFee).add(donationFee);
 
     }
 
@@ -1387,7 +1386,7 @@ contract RisingSun is ERC20, Ownable {
 
 
     function setAutomatedMarketMakerPair(address pair, bool value) public onlyOwner {
-        require(pair != uniswapV2Pair, "RisingSun: The PancakeSwap pair cannot be removed from automatedMarketMakerPairs");
+        require(pair != uniswapV2Pair, "EroFinance: The PancakeSwap pair cannot be removed from automatedMarketMakerPairs");
 
         _setAutomatedMarketMakerPair(pair, value);
     }
@@ -1398,7 +1397,7 @@ contract RisingSun is ERC20, Ownable {
 
 
     function _setAutomatedMarketMakerPair(address pair, bool value) private {
-        require(automatedMarketMakerPairs[pair] != value, "RisingSun: Automated market maker pair is already set to that value");
+        require(automatedMarketMakerPairs[pair] != value, "EroFinance: Automated market maker pair is already set to that value");
         automatedMarketMakerPairs[pair] = value;
 
         if(value) {
@@ -1410,8 +1409,8 @@ contract RisingSun is ERC20, Ownable {
 
 
     function updateGasForProcessing(uint256 newValue) public onlyOwner {
-        require(newValue >= 200000 && newValue <= 800000, "RisingSun: gasForProcessing must be between 200,000 and 500,000");
-        require(newValue != gasForProcessing, "RisingSun: Cannot update gasForProcessing to same value");
+        require(newValue >= 200000 && newValue <= 800000, "EroFinance: gasForProcessing must be between 200,000 and 500,000");
+        require(newValue != gasForProcessing, "EroFinance: Cannot update gasForProcessing to same value");
         emit GasForProcessingUpdated(newValue, gasForProcessing);
         gasForProcessing = newValue;
     }
@@ -1616,12 +1615,12 @@ contract RisingSun is ERC20, Ownable {
 
     }
 
-    function swapTokensForUSDT(uint256 tokenAmount) private {
+    function swapTokensForUSDC(uint256 tokenAmount) private {
 
         address[] memory path = new address[](3);
         path[0] = address(this);
         path[1] = uniswapV2Router.WETH();
-        path[2] = USDT;
+        path[2] = USDC;
 
         _approve(address(this), address(uniswapV2Router), tokenAmount);
 
@@ -1653,18 +1652,18 @@ contract RisingSun is ERC20, Ownable {
     }
 
     function swapAndSendDividends(uint256 tokens) private{
-        swapTokensForUSDT(tokens);
-        uint256 dividends = IERC20(USDT).balanceOf(address(this));
-        bool success = IERC20(USDT).transfer(address(dividendTracker), dividends);
+        swapTokensForUSDC(tokens);
+        uint256 dividends = IERC20(USDC).balanceOf(address(this));
+        bool success = IERC20(USDC).transfer(address(dividendTracker), dividends);
 
         if (success) {
-            dividendTracker.distributeUSDTDividends(dividends);
+            dividendTracker.distributeUSDCDividends(dividends);
             emit SendDividends(tokens, dividends);
         }
     }
 }
 
-contract RisingSunDividendTracker is Ownable, DividendPayingToken {
+contract EroFinanceDividendTracker is Ownable, DividendPayingToken {
     using SafeMath for uint256;
     using SafeMathInt for int256;
     using IterableMapping for IterableMapping.Map;
@@ -1684,17 +1683,17 @@ contract RisingSunDividendTracker is Ownable, DividendPayingToken {
 
     event Claim(address indexed account, uint256 amount, bool indexed automatic);
 
-    constructor() public DividendPayingToken("RisingSun_Dividen_Tracker", "RisingSun_Dividend_Tracker") {
+    constructor() public DividendPayingToken("EroFinance_Dividen_Tracker", "EroFinance_Dividend_Tracker") {
     	claimWait = 3600;
-        minimumTokenBalanceForDividends = 10000000000 *  10**9; //must hold 10000000000+ tokens
+        minimumTokenBalanceForDividends = 100 *  10**18; //must hold 100+ tokens
     }
 
     function _transfer(address, address, uint256) internal override {
-        require(false, "RisingSun_Dividend_Tracker: No transfers allowed");
+        require(false, "EroFinance_Dividend_Tracker: No transfers allowed");
     }
 
     function withdrawDividend() public override {
-        require(false, "RisingSun_Dividend_Tracker: withdrawDividend disabled. Use the 'claim' function on the main RisingSun contract.");
+        require(false, "EroFinance_Dividend_Tracker: withdrawDividend disabled. Use the 'claim' function on the main EroFinance contract.");
     }
 
     function excludeFromDividends(address account) external onlyOwner {
@@ -1708,8 +1707,8 @@ contract RisingSunDividendTracker is Ownable, DividendPayingToken {
     }
 
     function updateClaimWait(uint256 newClaimWait) external onlyOwner {
-        require(newClaimWait >= 3600 && newClaimWait <= 86400, "RisingSun_Dividend_Tracker: claimWait must be updated to between 1 and 24 hours");
-        require(newClaimWait != claimWait, "RisingSun_Dividend_Tracker: Cannot update claimWait to same value");
+        require(newClaimWait >= 3600 && newClaimWait <= 86400, "EroFinance_Dividend_Tracker: claimWait must be updated to between 1 and 24 hours");
+        require(newClaimWait != claimWait, "EroFinance_Dividend_Tracker: Cannot update claimWait to same value");
         emit ClaimWaitUpdated(newClaimWait, claimWait);
         claimWait = newClaimWait;
     }
