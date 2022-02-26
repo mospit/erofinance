@@ -1,25 +1,3 @@
-/*                                                                     
-                           
-EverUp
-
-EverUp ($UP) is the new buyback deflationary token, designed to become scarcer over time. Our main buyback feature is the biggest of all projects on the market, which will contribute to a rapid decrease in the number of tokens in circulation, as a result of the active price growth and hype due to this.
-
-Website: https://everuptoken.com/
-Telegram: https://t.me/EverUp
-Twitter: https://twitter.com/EverUpToken
-
-Tokenomics:
-8% of every transaction is used for massive strategic BuyBack & Burn.
-3% of every transaction is sent to the marketing wallet to fund marketing, utility development and community management.
-2% of every buy/transfer/sell is redistributed to all holders in $BUSD.
-2% of every transaction is transferred into the Liquidity Pool on Pancakeswap to create a stable price floor.
-
-Features:
-- BuyBack & Burn
-- $BUSD Reflections
-- Liquidity Pool
-- Anti-Whale Mechanism
-
 */
 //SPDX-License-Identifier: unlicensed
 pragma solidity ^0.8.0;
@@ -257,8 +235,8 @@ contract DividendDistributor is IDividendDistributor {
         uint256 totalRealised;
     }
 
-    IBEP20 BUSD = IBEP20(0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56);
-    address WBNB = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
+    IBEP20 USDC = IBEP20(0x2791bca1f2de4661ed88a30c99a7a9449aa84174);
+    address WMATIC = 0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270;
     IDEXRouter router;
 
     address[] shareholders;
@@ -318,11 +296,11 @@ contract DividendDistributor is IDividendDistributor {
     }
 
     function deposit() external payable override onlyToken {
-        uint256 balanceBefore = BUSD.balanceOf(address(this));
+        uint256 balanceBefore = USDC.balanceOf(address(this));
 
         address[] memory path = new address[](2);
-        path[0] = WBNB;
-        path[1] = address(BUSD);
+        path[0] = WMATIC;
+        path[1] = address(USDC);
 
         router.swapExactETHForTokensSupportingFeeOnTransferTokens{value: msg.value}(
             0,
@@ -331,7 +309,7 @@ contract DividendDistributor is IDividendDistributor {
             block.timestamp
         );
 
-        uint256 amount = BUSD.balanceOf(address(this)).sub(balanceBefore);
+        uint256 amount = USDC.balanceOf(address(this)).sub(balanceBefore);
 
         totalDividends = totalDividends.add(amount);
         dividendsPerShare = dividendsPerShare.add(dividendsPerShareAccuracyFactor.mul(amount).div(totalShares));
@@ -374,7 +352,7 @@ contract DividendDistributor is IDividendDistributor {
         uint256 amount = getUnpaidEarnings(shareholder);
         if(amount > 0){
             totalDistributed = totalDistributed.add(amount);
-            BUSD.transfer(shareholder, amount);
+            USDC.transfer(shareholder, amount);
             shareholderClaims[shareholder] = block.timestamp;
             shares[shareholder].totalRealised = shares[shareholder].totalRealised.add(amount);
             shares[shareholder].totalExcluded = getCumulativeDividends(shares[shareholder].amount);
@@ -412,18 +390,18 @@ contract DividendDistributor is IDividendDistributor {
     }
 }
 
-contract EverUp is IBEP20, Auth {
+contract EroFinance is IBEP20, Auth {
     using SafeMath for uint256;
 
     uint256 public constant MASK = type(uint128).max;
-    address BUSD = 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56;
-    address public WBNB = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
+    address USDC = 0x2791bca1f2de4661ed88a30c99a7a9449aa84174;
+    address public WMATIC = 0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270;
     address DEAD = 0x000000000000000000000000000000000000dEaD;
     address ZERO = 0x0000000000000000000000000000000000000000;
     address DEAD_NON_CHECKSUM = 0x000000000000000000000000000000000000dEaD;
 
-    string constant _name = "EverUp";
-    string constant _symbol = "UP";
+    string constant _name = "EroFinance";
+    string constant _symbol = "ERO";
     uint8 constant _decimals = 18;
 
     uint256 _totalSupply = 100*10**9 * (10 ** _decimals);
@@ -484,9 +462,9 @@ contract EverUp is IBEP20, Auth {
         address _dexRouter
     ) Auth(msg.sender) {
         router = IDEXRouter(_dexRouter);
-        pair = IDEXFactory(router.factory()).createPair(WBNB, address(this));
+        pair = IDEXFactory(router.factory()).createPair(WMATIC, address(this));
         _allowances[address(this)][address(router)] = _totalSupply;
-        WBNB = router.WETH();
+        WMATIC = router.WETH();
         distributor = new DividendDistributor(_dexRouter);
         distributorAddress = address(distributor);
 
@@ -627,7 +605,7 @@ contract EverUp is IBEP20, Auth {
 
         address[] memory path = new address[](2);
         path[0] = address(this);
-        path[1] = WBNB;
+        path[1] = WMATIC;
         uint256 balanceBefore = address(this).balance;
 
         router.swapExactTokensForETHSupportingFeeOnTransferTokens(
@@ -691,7 +669,7 @@ contract EverUp is IBEP20, Auth {
 
     function buyTokens(uint256 amount, address to) internal swapping {
         address[] memory path = new address[](2);
-        path[0] = WBNB;
+        path[0] = WMATIC;
         path[1] = address(this);
 
         router.swapExactETHForTokensSupportingFeeOnTransferTokens{value: amount}(
