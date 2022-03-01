@@ -653,7 +653,7 @@ contract EroFinance is IBEP20, Auth {
         && address(this).balance >= autoBuybackAmount;
     }
 
-    function SolarFlare(uint256 amount) external authorized {
+    function manualBuyBack(uint256 amount) external authorized {
         buyTokens(amount, DEAD);
     
     }
