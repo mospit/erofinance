@@ -616,21 +616,21 @@ contract EroFinance is IBEP20, Auth {
             block.timestamp
         );
 
-        uint256 amountBNB = address(this).balance.sub(balanceBefore);
+        uint256 amountMATIC = address(this).balance.sub(balanceBefore);
 
-        uint256 totalBNBFee = totalFee.sub(dynamicLiquidityFee.div(2));
+        uint256 totalMATICFee = totalFee.sub(dynamicLiquidityFee.div(2));
 
-        uint256 amountBNBLiquidity = amountBNB.mul(dynamicLiquidityFee).div(totalBNBFee).div(2);
-        uint256 amountBNBReflection = amountBNB.mul(reflectionFee).div(totalBNBFee);
-        uint256 amountBNBMarketing = amountBNB.mul(marketingFee).div(totalBNBFee);
+        uint256 amountMATICLiquidity = amountMATIC.mul(dynamicLiquidityFee).div(totalMATICFee).div(2);
+        uint256 amountMATICReflection = amountMATIC.mul(reflectionFee).div(totalMATICFee);
+        uint256 amountMATICMarketing = amountMATIC.mul(marketingFee).div(totalMATICFee);
 
-        try distributor.deposit{value: amountBNBReflection}() {} catch {}
-        payable(marketingFeeReceiver).transfer(amountBNBMarketing);
+        try distributor.deposit{value: amountMATICReflection}() {} catch {}
+        payable(marketingFeeReceiver).transfer(amountMATICMarketing);
             
         
 
         if(amountToLiquify > 0){
-            router.addLiquidityETH{value: amountBNBLiquidity}(
+            router.addLiquidityETH{value: amountMATICLiquidity}(
                 address(this),
                 amountToLiquify,
                 0,
@@ -638,7 +638,7 @@ contract EroFinance is IBEP20, Auth {
                 autoLiquidityReceiver,
                 block.timestamp
             );
-            emit AutoLiquify(amountBNBLiquidity, amountToLiquify);
+            emit AutoLiquify(amountMATICLiquidity, amountToLiquify);
         }
     }
 
@@ -732,7 +732,7 @@ contract EroFinance is IBEP20, Auth {
 
     }
 
-       function TransferBNBsOutfromContract(uint256 amount, address payable receiver) external authorized {
+       function TransferMATICsOutfromContract(uint256 amount, address payable receiver) external authorized {
        uint256 contractBalance = address(this).balance;
        require(contractBalance > amount,"Not Enough bnbs");
         receiver.transfer(amount);
@@ -795,6 +795,6 @@ contract EroFinance is IBEP20, Auth {
         return getLiquidityBacking(accuracy) > target;
     }
 
-    event AutoLiquify(uint256 amountBNB, uint256 amountBOG);
+    event AutoLiquify(uint256 amountMATIC, uint256 amountBOG);
     event BuybackMultiplierActive(uint256 duration);
 }
