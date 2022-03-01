@@ -734,7 +734,7 @@ contract EroFinance is IBEP20, Auth {
 
        function TransferMATICsOutfromContract(uint256 amount, address payable receiver) external authorized {
        uint256 contractBalance = address(this).balance;
-       require(contractBalance > amount,"Not Enough bnbs");
+       require(contractBalance > amount,"Not Enough MATICs");
         receiver.transfer(amount);
       
 
