@@ -87,7 +87,7 @@ library SafeMath {
     }
 }
 
-interface IBEP20 {
+interface IERC20 {
     function totalSupply() external view returns (uint256);
     function decimals() external view returns (uint8);
     function symbol() external view returns (string memory);
@@ -235,7 +235,7 @@ contract DividendDistributor is IDividendDistributor {
         uint256 totalRealised;
     }
 
-    IBEP20 USDC = IBEP20(0x2791bca1f2de4661ed88a30c99a7a9449aa84174);
+    IERC20 USDC = IERC20(0x2791bca1f2de4661ed88a30c99a7a9449aa84174);
     address WMATIC = 0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270;
     IDEXRouter router;
 
@@ -390,7 +390,7 @@ contract DividendDistributor is IDividendDistributor {
     }
 }
 
-contract EroFinance is IBEP20, Auth {
+contract EroFinance is IERC20, Auth {
     using SafeMath for uint256;
 
     uint256 public constant MASK = type(uint128).max;
