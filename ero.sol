@@ -1,4 +1,4 @@
-*/
+
 //SPDX-License-Identifier: unlicensed
 pragma solidity ^0.8.0;
 
@@ -235,8 +235,9 @@ contract DividendDistributor is IDividendDistributor {
         uint256 totalRealised;
     }
 
-    IERC20 USDC = IERC20(0x2791bca1f2de4661ed88a30c99a7a9449aa84174);
-    address WMATIC = 0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270;
+    IERC20 USDC = IERC20(0x8Dc69C915DD2b74f4C0503A115622611CE6ff9e4); // USDT TESTNET
+    // IERC20 USDC = IERC20(0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174);
+    address WMATIC = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
     IDEXRouter router;
 
     address[] shareholders;
@@ -270,7 +271,7 @@ contract DividendDistributor is IDividendDistributor {
     constructor (address _router) {
         router = _router != address(0)
         ? IDEXRouter(_router)
-        : IDEXRouter(0x10ED43C718714eb63d5aA57B78B54704E256024E);
+        : IDEXRouter(0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff);
         _token = msg.sender;
     }
 
@@ -394,8 +395,9 @@ contract EroFinance is IERC20, Auth {
     using SafeMath for uint256;
 
     uint256 public constant MASK = type(uint128).max;
-    address USDC = 0x2791bca1f2de4661ed88a30c99a7a9449aa84174;
-    address public WMATIC = 0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270;
+    address USDC = 0x8Dc69C915DD2b74f4C0503A115622611CE6ff9e4; // USDT TESTNET
+    // address USDC = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
+    address public WMATIC = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
     address DEAD = 0x000000000000000000000000000000000000dEaD;
     address ZERO = 0x0000000000000000000000000000000000000000;
     address DEAD_NON_CHECKSUM = 0x000000000000000000000000000000000000dEaD;
