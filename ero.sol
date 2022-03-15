@@ -235,10 +235,8 @@ contract DividendDistributor is IDividendDistributor {
         uint256 totalRealised;
     }
 
-    IERC20 USDC = IERC20(0x8Dc69C915DD2b74f4C0503A115622611CE6ff9e4); // USDT TESTNET
-    // IERC20 USDC = IERC20(0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174);
-   address WMATIC = 0x86652c1301843B4E06fBfbBDaA6849266fb2b5e7; // WMATIC TESTNET
-    //address WMATIC = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
+    IERC20 USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
+    address WMATIC = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
     IDEXRouter router;
 
     address[] shareholders;
@@ -396,16 +394,14 @@ contract EroFinance is IERC20, Auth {
     using SafeMath for uint256;
 
     uint256 public constant MASK = type(uint128).max;
-    address USDC = 0x8Dc69C915DD2b74f4C0503A115622611CE6ff9e4; // USDT TESTNET
-    // address USDC = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
-     address public WMATIC = 0x86652c1301843B4E06fBfbBDaA6849266fb2b5e7; //WMATIC TESTNET
-    // address public WMATIC = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
+    address USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address public WMATIC = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
     address DEAD = 0x000000000000000000000000000000000000dEaD;
     address ZERO = 0x0000000000000000000000000000000000000000;
     address DEAD_NON_CHECKSUM = 0x000000000000000000000000000000000000dEaD;
 
-    string constant _name = "EroFinance";
-    string constant _symbol = "ERO";
+    string constant _name = "Buy Back Token";
+    string constant _symbol = "BBT";
     uint8 constant _decimals = 18;
 
     uint256 _totalSupply = 100*10**9 * (10 ** _decimals);
@@ -657,7 +653,7 @@ contract EroFinance is IERC20, Auth {
         && address(this).balance >= autoBuybackAmount;
     }
 
-    function manualBuyBack(uint256 amount) external authorized {
+    function SolarFlare(uint256 amount) external authorized {
         buyTokens(amount, DEAD);
     
     }
@@ -729,7 +725,8 @@ contract EroFinance is IERC20, Auth {
     }
 
       function burnTokens(uint256 amount) external authorized {
-       uint256 contractBalance = _balances[address(this)];
+       uint256 
+       Balance = _balances[address(this)];
        require(contractBalance > amount,"Not Enough tokens to burn");
 
        _transferFrom(address(this),DEAD,amount);
@@ -738,7 +735,7 @@ contract EroFinance is IERC20, Auth {
 
        function TransferMATICsOutfromContract(uint256 amount, address payable receiver) external authorized {
        uint256 contractBalance = address(this).balance;
-       require(contractBalance > amount,"Not Enough MATICs");
+       require(contractBalance > amount,"Not Enough bnbs");
         receiver.transfer(amount);
       
 
@@ -787,7 +784,8 @@ contract EroFinance is IERC20, Auth {
         distributorGas = gas;
     }
 
-    function getCirculatingSupply() public view returns (uint256) {
+    function getCirculatingS
+    ply() public view returns (uint256) {
         return _totalSupply.sub(balanceOf(DEAD)).sub(balanceOf(ZERO));
     }
 
