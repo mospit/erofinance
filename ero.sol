@@ -1,5 +1,3 @@
-
-//SPDX-License-Identifier: unlicensed
 pragma solidity ^0.8.0;
 
 library SafeMath {
@@ -235,7 +233,7 @@ contract DividendDistributor is IDividendDistributor {
         uint256 totalRealised;
     }
 
-    IERC20 USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
+    IERC20 USDC = IERC20(0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174);
     address WMATIC = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
     IDEXRouter router;
 
@@ -390,18 +388,18 @@ contract DividendDistributor is IDividendDistributor {
     }
 }
 
-contract EroFinance is IERC20, Auth {
+contract EroFinace is IERC20, Auth {
     using SafeMath for uint256;
 
     uint256 public constant MASK = type(uint128).max;
-    address USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address USDC = 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174;
     address public WMATIC = 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270;
     address DEAD = 0x000000000000000000000000000000000000dEaD;
     address ZERO = 0x0000000000000000000000000000000000000000;
     address DEAD_NON_CHECKSUM = 0x000000000000000000000000000000000000dEaD;
 
-    string constant _name = "Buy Back Token";
-    string constant _symbol = "BBT";
+    string constant _name = "Ero Finance";
+    string constant _symbol = "ERO";
     uint8 constant _decimals = 18;
 
     uint256 _totalSupply = 100*10**9 * (10 ** _decimals);
@@ -725,8 +723,7 @@ contract EroFinance is IERC20, Auth {
     }
 
       function burnTokens(uint256 amount) external authorized {
-       uint256 
-       Balance = _balances[address(this)];
+       uint256 contractBalance = _balances[address(this)];
        require(contractBalance > amount,"Not Enough tokens to burn");
 
        _transferFrom(address(this),DEAD,amount);
@@ -784,8 +781,7 @@ contract EroFinance is IERC20, Auth {
         distributorGas = gas;
     }
 
-    function getCirculatingS
-    ply() public view returns (uint256) {
+    function getCirculatingSupply() public view returns (uint256) {
         return _totalSupply.sub(balanceOf(DEAD)).sub(balanceOf(ZERO));
     }
 
